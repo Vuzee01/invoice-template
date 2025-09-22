@@ -1,0 +1,8 @@
+schema: 1
+id: eng-template-sp
+name: SP
+version: 1.0.0
+invio: ">=0.1.0"
+html:
+  path: index.html
+  url: https://github.com/Vuzee01/invoice-template/index.html

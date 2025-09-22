@@ -5,117 +5,92 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Invoice {{invoiceNumber}}</title>
-  <!-- NOTE (Invio): installed templates disallow <link>, external fonts, <script>, inline on* handlers, and <img>. Keep everything inline & simple. -->
+  <!-- Invio installed templates are sanitized: no images, scripts, iframes, external CSS, or inline event handlers. Keep everything inline. -->
   <style>
     * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Open Sans', Arial, sans-serif; }
-    .invoice-box { position: relative; max-width: 800px; min-height: 1130px; margin: auto; padding: 110px 65px 60px 90px; font-size: 10px; line-height: 18px; color: #555; }
+    :root { --hl: {{highlightColor}}; --hl-light: {{highlightColorLight}}; }
+    .invoice { position: relative; max-width: 800px; min-height: 1130px; margin: auto; padding: 110px 65px 60px 90px; font-size: 10px; line-height: 18px; color: #222; }
     .shadow { box-shadow: 0 0 10px rgba(0,0,0,.15); }
-    table { width: 100%; border-collapse: collapse; }
-    td, th { padding: 5px; vertical-align: top; text-align: left; }
+    h1 { margin: 0 0 8px 0; font-size: 18px; color: var(--hl); }
+    .muted { color: #666; }
+    .grid { width: 100%; border-collapse: collapse; }
+    .grid th, .grid td { padding: 6px 0; border-top: 1px solid #e5e5e5; text-align: left; }
+    .grid th { background: #f7f7f7; border-top-color: #ddd; font-weight: 700; }
     .right { text-align: right; }
-    .top td { padding-bottom: 20px; }
-    .title { font-size: 16px; font-weight: 600; }
-    .heading td, .heading th { background: #eee; border-bottom: 1px solid #ddd; font-weight: 700; }
-    .item-row td { border-bottom: 1px solid #eee; }
-    .item-row.last td { border-bottom: none; }
-    .total strong { font-weight: 700; }
-    .muted { color: #777; }
-    .signature { display: inline-block; border-top: 1px dotted #555; margin-top: 60px; width: 200px; padding-top: 6px; }
-    .footer { position: absolute; bottom: 60px; left: 95px; width: calc(100% - 190px); font-size: 9px; }
+    .two-col { width: 100%; border-collapse: collapse; }
+    .two-col td { vertical-align: top; padding: 0 0 6px 0; }
+    .section { margin: 8px 0 18px 0; }
+    .rule { height: 2px; background: var(--hl-light); margin: 8px 0 12px 0; }
+    .signature { display: inline-block; border-top: 1px dotted #555; margin-top: 48px; width: 200px; padding-top: 6px; }
+    .footer { position: absolute; bottom: 60px; left: 90px; right: 65px; font-size: 9px; }
     @media print { .shadow { box-shadow: none; } }
   </style>
 </head>
 <body>
-  <div class="invoice-box shadow">
+  <div class="invoice shadow">
     <!-- Header -->
-    <table class="top">
-      <tr>
-        <td style="width:60%">
-          <div class="title">Invoice No. {{invoiceNumber}}</div>
-          <div>Place: Banja Luka</div>
-          <div>Date: {{issueDate}}</div>
-          {{#dueDate}}
-          <div>Due: {{dueDate}}</div>
-          {{/dueDate}}
-        </td>
-        <td class="right" style="width:40%">
-          <!-- If you want a logo, render it on the server into the HTML or use background CSS; <img> is disallowed in installed templates. -->
-          <div style="font-weight:700">{{companyName}}</div>
-          <div>{{companyAddress}}</div>
-          <div>Bosna i Hercegovina</div>
-          <br>
-          <div>JIB: {{companyTaxId}}</div>
-          <div>Phone: {{companyPhone}}</div>
-          <div>Mail: {{companyEmail}}</div>
-        </td>
-      </tr>
-    </table>
+    <h1>Invoice {{invoiceNumber}}</h1>
+    <div class="muted">{{companyName}} → {{customerName}}</div>
+    <div class="muted">Issued {{issueDate}}{{#dueDate}} · Due {{dueDate}}{{/dueDate}}</div>
+    <div class="rule"></div>
 
     <!-- Parties -->
-    <table class="information" style="margin: 6px 0 24px 0;">
+    <table class="two-col section">
       <tr>
         <td style="width:60%">
-          <div class="muted" style="font-weight:700;">Bill To</div>
-          <div>{{customerName}}</div>
-          {{#customerAddress}}
-          <div>{{customerAddress}}</div>
-          {{/customerAddress}}
-          {{#customerTaxId}}
-          <div>Tax number: {{customerTaxId}}</div>
-          {{/customerTaxId}}
-          {{#customerEmail}}
-          <div>Email: {{customerEmail}}</div>
-          {{/customerEmail}}
-          {{#customerPhone}}
-          <div>Phone: {{customerPhone}}</div>
-          {{/customerPhone}}
+          <div style="font-weight:700;">From</div>
+          <div>{{companyName}}</div>
+          <div>{{companyAddress}}</div>
+          <div>JIB: {{companyTaxId}}</div>
+          <div>Email: {{companyEmail}}</div>
+          <div>Phone: {{companyPhone}}</div>
         </td>
-        <td style="width:40%"></td>
+        <td style="width:40%">
+          <div style="font-weight:700;">Bill To</div>
+          <div>{{customerName}}</div>
+          {{#customerAddress}}<div>{{customerAddress}}</div>{{/customerAddress}}
+          {{#customerTaxId}}<div>Tax number: {{customerTaxId}}</div>{{/customerTaxId}}
+          {{#customerEmail}}<div>Email: {{customerEmail}}</div>{{/customerEmail}}
+          {{#customerPhone}}<div>Phone: {{customerPhone}}</div>{{/customerPhone}}
+        </td>
       </tr>
     </table>
 
     <!-- Items -->
-    <table>
-      <tr class="heading">
-        <th>DESCRIPTION</th>
-        <th class="right">PRICE</th>
-        <th class="right">QUANTITY</th>
-        <th class="right">AMOUNT</th>
-      </tr>
-
-      {{#items}}
-      <tr class="item-row">
-        <td>{{description}}</td>
-        <td class="right">{{unitPrice}} {{currency}}</td>
-        <td class="right">{{quantity}}</td>
-        <td class="right">{{lineTotal}} {{currency}}</td>
-      </tr>
-      {{/items}}
+    <table class="grid section">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th class="right">Qty</th>
+          <th class="right">Unit</th>
+          <th class="right">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#items}}
+        <tr>
+          <td>{{description}}</td>
+          <td class="right">{{quantity}}</td>
+          <td class="right">{{unitPrice}}</td>
+          <td class="right">{{lineTotal}}</td>
+        </tr>
+        {{/items}}
+      </tbody>
     </table>
 
     <!-- Totals -->
-    <table style="margin-top: 12px;">
+    <table class="two-col section">
       <tr>
-        <td style="width:60%"></td>
-        <td class="right" style="width:40%">
-          <div>Subtotal: {{subtotal}} {{currency}}</div>
-          {{#hasDiscount}}
-          <div>Discount {{discountPercentage || ""}}{{#discountPercentage}}%{{/discountPercentage}}: −{{discountAmount}} {{currency}}</div>
-          {{/hasDiscount}}
-          {{#hasTax}}
-          <div>Tax {{taxRate}}%: {{taxAmount}} {{currency}}</div>
-          {{/hasTax}}
-          <div class="total"><strong>Total: {{total}} {{currency}}</strong></div>
+        <td style="width:60%">
+          <div class="muted">{{companyName}} is not in VAT system</div>
+        </td>
+        <td style="width:40%" class="right">
+          <div>Subtotal: {{subtotal}}</div>
+          {{#hasDiscount}}<div>Discount{{#discountPercentage}} ({{discountPercentage}}%){{/discountPercentage}}: −{{discountAmount}}</div>{{/hasDiscount}}
+          {{#hasTax}}<div>Tax ({{taxRate}}%): {{taxAmount}}</div>{{/hasTax}}
+          <div style="font-weight:700;">Total: {{total}} {{currency}}</div>
         </td>
       </tr>
-
-      <tr>
-        <td class="muted">
-          {{companyName}} is not in VAT system
-        </td>
-        <td></td>
-      </tr>
-
       <tr>
         <td>
           <span class="signature">Nikola Grabovica</span>
@@ -127,18 +102,10 @@
     <!-- Footer / Payment info -->
     <div class="footer">
       <div style="font-weight:700; margin-bottom:4px;">BANK PAYMENT INFO</div>
-      {{#paymentMethods}}
-        <div>{{.}}</div>
-      {{/paymentMethods}}
-      {{#bankAccount}}
-        <div>{{bankAccount}}</div>
-      {{/bankAccount}}
-      {{#paymentTerms}}
-        <div class="muted">{{paymentTerms}}</div>
-      {{/paymentTerms}}
-      {{#notes}}
-        <div style="margin-top:8px;">{{notes}}</div>
-      {{/notes}}
+      {{#paymentMethods}}<div>{{.}}</div>{{/paymentMethods}}
+      {{#bankAccount}}<div>{{bankAccount}}</div>{{/bankAccount}}
+      {{#paymentTerms}}<div class="muted">{{paymentTerms}}</div>{{/paymentTerms}}
+      {{#notes}}<div style="margin-top:8px;">{{notes}}</div>{{/notes}}
     </div>
   </div>
 </body>

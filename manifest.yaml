@@ -1,185 +1,145 @@
 <!doctype html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Providio | Invoice</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800&amp;subset=latin-ext" rel="stylesheet">
-    <style>*{font-family:'Open Sans',sans-serif}.invoice_logo{width:100px;height:auto}.invoice-box{position:relative;box-sizing:border-box;max-width:800px;min-height:1130px;margin:auto;padding:110px 65px 60px 90px;font-size:10px;line-height:18px;color:#555;box-shadow:0 0 10px rgba(0, 0, 0, .15)}.invoice-box table{width:100%;line-height:inherit;text-align:left}.invoice-box table td{padding:5px;vertical-align:top}.invoice-box table tr td:nth-child(2){text-align:right}.invoice-box table tr.top table td{padding-bottom:20px;padding-left:0;padding-right:0}.information table{padding:50px 0 46px 0}.invoice-box table tr.top table td.title{font-size:45px;line-height:45px;color:#333;padding:10px 0 0 0}.invoice-box table tr.information table td{padding:0 0 40px 0}.invoice-box table tr.heading td{background:#eee;border-bottom:1px solid #ddd;font-weight:bold}.invoice-box table tr.details td{padding-bottom:20px}.invoice-box table tr.item td{border-bottom:1px solid #eee}.invoice-box table tr.item.last td{border-bottom:none}.invoice-box table tr.total td:nth-child(2){border-top:2px solid #eee;font-weight:bold}.invoice-box table tr.total_price{font-weight:700}.total_price_letters{font-weight:400}.invoice_title{display:inline-block;font-weight:600;font-size:14px;padding:0}.signature{display:inline-block;border-top:1px dotted #555;margin-top:60px;width:200px}.footer{position:absolute;bottom:60px;left:95px;width:100%}.obrisi_me{font-size:16px;font-weight:700;color:red}@media only screen and (max-width: 600px){.invoice-box table tr.top table td{width:100%;display:block;text-align:center}.invoice-box table tr.information table td{width:100%;display:block;text-align:center}}.rtl{direction:rtl;font-family:Tahoma,'Helvetica Neue','Helvetica',Helvetica,Arial,sans-serif}.rtl table{text-align:right}.rtl table tr td:nth-child(2){text-align:left}@media print{.invoice-box{box-shadow:0 0 0 rgba(0,0,0,0)}.obrisi_me{display:none}}</style>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Invoice {{invoiceNumber}}</title>
+  <!-- NOTE (Invio): installed templates disallow <link>, external fonts, <script>, inline on* handlers, and <img>. Keep everything inline & simple. -->
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Open Sans', Arial, sans-serif; }
+    .invoice-box { position: relative; max-width: 800px; min-height: 1130px; margin: auto; padding: 110px 65px 60px 90px; font-size: 10px; line-height: 18px; color: #555; }
+    .shadow { box-shadow: 0 0 10px rgba(0,0,0,.15); }
+    table { width: 100%; border-collapse: collapse; }
+    td, th { padding: 5px; vertical-align: top; text-align: left; }
+    .right { text-align: right; }
+    .top td { padding-bottom: 20px; }
+    .title { font-size: 16px; font-weight: 600; }
+    .heading td, .heading th { background: #eee; border-bottom: 1px solid #ddd; font-weight: 700; }
+    .item-row td { border-bottom: 1px solid #eee; }
+    .item-row.last td { border-bottom: none; }
+    .total strong { font-weight: 700; }
+    .muted { color: #777; }
+    .signature { display: inline-block; border-top: 1px dotted #555; margin-top: 60px; width: 200px; padding-top: 6px; }
+    .footer { position: absolute; bottom: 60px; left: 95px; width: calc(100% - 190px); font-size: 9px; }
+    @media print { .shadow { box-shadow: none; } }
+  </style>
 </head>
-
 <body>
-    <div class="invoice-box">
-        <table cellpadding="0" cellspacing="0">
-            <tr class="top">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                            <!-- <td class="title">
-                                <img src="logo.png" class="invoice_logo">
-                            </td> -->
-                            
-                            <td>
-                                <span class="invoice_title">
-                                    Invoice number.
-                                <span id="number" contenteditable="true" onblur="save('number')">{{invoiceNumber}}</span>
-                                </span><br>
-                                Place: Banja Luka<br>
-								Date: 05.06.2024<br> 
-                               <!  Datum izdavanja: <span class="date"></span> <br> 
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            
-            <tr class="information">
-                    <table>
-                        <tr>
-                            <td>
-                                <span id="company" contenteditable="true" onblur="save('company')">{{companyName}}</span>
-                                <br>
-                                <span id="address" contenteditable="true" onblur="save('address')">{{companyAddress}}</span>
-                                <br>
-                                Bosna i Hercegovina<br><br>
+  <div class="invoice-box shadow">
+    <!-- Header -->
+    <table class="top">
+      <tr>
+        <td style="width:60%">
+          <div class="title">Invoice No. {{invoiceNumber}}</div>
+          <div>Place: Banja Luka</div>
+          <div>Date: {{issueDate}}</div>
+          {{#dueDate}}
+          <div>Due: {{dueDate}}</div>
+          {{/dueDate}}
+        </td>
+        <td class="right" style="width:40%">
+          <!-- If you want a logo, render it on the server into the HTML or use background CSS; <img> is disallowed in installed templates. -->
+          <div style="font-weight:700">{{companyName}}</div>
+          <div>{{companyAddress}}</div>
+          <div>Bosna i Hercegovina</div>
+          <br>
+          <div>JIB: {{companyTaxId}}</div>
+          <div>Phone: {{companyPhone}}</div>
+          <div>Mail: {{companyEmail}}</div>
+        </td>
+      </tr>
+    </table>
 
-                                JIB: <span id="jib" contenteditable="true" onblur="save('jib')">{{companyTaxId}}</span><br>
-                                Phone: <span id="phone" contenteditable="true" onblur="save('phone')">{{companyPhone}}</span><br>
-                                Mail: <span id="mail" contenteditable="true" onblur="save('mail')">{{companyEmail}}</span><br>
-                            </td>
-                            
-                            <td>
-                                {{customerName}}<br>
-                                {{customerAddress?}}<br><br>
+    <!-- Parties -->
+    <table class="information" style="margin: 6px 0 24px 0;">
+      <tr>
+        <td style="width:60%">
+          <div class="muted" style="font-weight:700;">Bill To</div>
+          <div>{{customerName}}</div>
+          {{#customerAddress}}
+          <div>{{customerAddress}}</div>
+          {{/customerAddress}}
+          {{#customerTaxId}}
+          <div>Tax number: {{customerTaxId}}</div>
+          {{/customerTaxId}}
+          {{#customerEmail}}
+          <div>Email: {{customerEmail}}</div>
+          {{/customerEmail}}
+          {{#customerPhone}}
+          <div>Phone: {{customerPhone}}</div>
+          {{/customerPhone}}
+        </td>
+        <td style="width:40%"></td>
+      </tr>
+    </table>
 
-                                Tax number: {{customerTaxId?}}<br>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
+    <!-- Items -->
+    <table>
+      <tr class="heading">
+        <th>DESCRIPTION</th>
+        <th class="right">PRICE</th>
+        <th class="right">QUANTITY</th>
+        <th class="right">AMOUNT</th>
+      </tr>
 
-        <table cellpadding="0" cellspacing="0">
-            <tr class="heading">
-                <td>DESCRIPTION</td>
-                <td align="right">PRICE</td>
-                <td align="right">QUANTITY</td>
-                <td align="right">AMOUNT</td>
-            </tr>
-            
-            <tr class="item">
-                <td>{{description}}</td>
-                <td align="right"><span class="price">{{unitPrice}}</span> {{currency}}</td>
-                <td align="right">- {{quantity}}</td>
-                <td align="right"><span id="price" contenteditable="true" onblur="handlePrice()">{{lineTotal}}</span> {{currency}}</td>
-            </tr>
-            <!-- <tr class="item">
-                <td>Usluge upravljanja računarskom opremom i sistemom</td>
-                <td align="right"><span>46.11</span> {{currency}}</td>
-                <td align="right">- 0.00 {{currency}}</td>
-                <td align="right"><span>46.11</span> {{currency}}</td>
-                <td align="right"><span>46.11</span> {{currency}}</td>
-            </tr> -->
-			<!-- <tr class="item">
-                <td>Usluge montaže i konfiguracije mrežne opreme</td>
-                <td align="right"><span>690.00</span> {{currency}}</td>
-                <td align="right">- 0.00 {{currency}}</td>
-                <td align="right"><span>690.00</span> {{currency}}</td>
-                <td align="right"><span>690.00</span> {{currency}}</td>
-            </tr> -->
-	            <!-- <tr class="item">
-                <td>Konsultacije o računarskim sistemima</td>
-                <td align="right"><span>33.23</span> {{currency}}</td>
-                <td align="right">- 0.00 {{currency}}</td>
-                <td align="right"><span>33.23</span> {{currency}}</td>
-                <td align="right"><span>33.23</span> {{currency}}</td>
-            </tr> -->
-        </table>
-        
-        <table>
-            <tr class="total_price">
-                <td></td>
+      {{#items}}
+      <tr class="item-row">
+        <td>{{description}}</td>
+        <td class="right">{{unitPrice}} {{currency}}</td>
+        <td class="right">{{quantity}}</td>
+        <td class="right">{{lineTotal}} {{currency}}</td>
+      </tr>
+      {{/items}}
+    </table>
 
-                <td>
-                    Total amount: <span id="total">{{total}}</span> {{currency}}
-                </td>
-            </tr>
+    <!-- Totals -->
+    <table style="margin-top: 12px;">
+      <tr>
+        <td style="width:60%"></td>
+        <td class="right" style="width:40%">
+          <div>Subtotal: {{subtotal}} {{currency}}</div>
+          {{#hasDiscount}}
+          <div>Discount {{discountPercentage || ""}}{{#discountPercentage}}%{{/discountPercentage}}: −{{discountAmount}} {{currency}}</div>
+          {{/hasDiscount}}
+          {{#hasTax}}
+          <div>Tax {{taxRate}}%: {{taxAmount}} {{currency}}</div>
+          {{/hasTax}}
+          <div class="total"><strong>Total: {{total}} {{currency}}</strong></div>
+        </td>
+      </tr>
 
-            
-            <tr class="total_price">
-                <td class="total_price_letters">
-                    <span id="company2" contenteditable="true" onblur="save('company2')">"NSS PD" Nikola Grabovica s.p.</span>
-                    is not in VAT system
-                </td>
-                <td></td>
-            </tr>
-            <tr class="">
-                <td>
-                </td>
-            </tr>
-            <tr class="">
-                <td>
-                    <span class="signature">
-                        Nikola Grabovica
-                    </span>
-                </td>
-                <td>
-                </td>
-            </tr>
-        </table>
+      <tr>
+        <td class="muted">
+          {{companyName}} is not in VAT system
+        </td>
+        <td></td>
+      </tr>
 
-        <div class="footer">			
-        </div>
+      <tr>
+        <td>
+          <span class="signature">Nikola Grabovica</span>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+
+    <!-- Footer / Payment info -->
+    <div class="footer">
+      <div style="font-weight:700; margin-bottom:4px;">BANK PAYMENT INFO</div>
+      {{#paymentMethods}}
+        <div>{{.}}</div>
+      {{/paymentMethods}}
+      {{#bankAccount}}
+        <div>{{bankAccount}}</div>
+      {{/bankAccount}}
+      {{#paymentTerms}}
+        <div class="muted">{{paymentTerms}}</div>
+      {{/paymentTerms}}
+      {{#notes}}
+        <div style="margin-top:8px;">{{notes}}</div>
+      {{/notes}}
     </div>
-
-    <script>
-        function save(id) {
-            const value = document.getElementById(id).innerHTML;
-            localStorage.setItem('@invoice:' + id, value);
-        }
-        function load(...ids) {
-            for (const id of ids) {
-                const value = localStorage.getItem('@invoice:' + id)
-                if (value) document.getElementById(id).innerHTML = value;
-            }
-        }
-        function addDate() {
-            var date = new Date();
-
-            var day = `${date.getDate()}`;
-            if (day < 10) day = '0' + day;
-
-            var month = `${date.getMonth() + 1}`;
-            if (month < 10) month = '0' + month;
-
-            var year = date.getFullYear();
-            var fullDate = `${day}.${month}.${year}.`
-
-            const dateElements = document.getElementsByClassName('date');
-
-            for (const element of dateElements) {
-                element.innerHTML = fullDate;
-            };
-        }
-        function handlePrice () {
-            const value = document.getElementById('price').innerHTML
-            const priceElements = document.getElementsByClassName('price');
-
-            for (const element of priceElements) {
-                element.innerHTML = value;
-            };
-
-            document.getElementById('total').innerHTML = `${+value + 90}.00`
-        }
-
-        window.addEventListener('DOMContentLoaded', (event) => {
-            load('number', 'company', 'address', 'jib', 'phone', 'mail', 'company2')
-            addDate();
-        });
-
-    </script>    
+  </div>
 </body>
 </html>

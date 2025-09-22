@@ -5,4 +5,4 @@ version: 1.0.0
 invio: ">=0.1.0"
 html:
   path: index.html
-  url: https://github.com/Vuzee01/invoice-template/index.html
+  url: https://raw.githubusercontent.com/Vuzee01/invoice-template/refs/heads/main/index.html
